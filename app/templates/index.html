@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-inner">
+
+    <!-- Glowing Active Badge -->
+    <div class="hero-badge" role="status" aria-label="Unlimited downloads active">
+      <span class="badge-dot"></span>
+      <span>Free &amp; Unlimited Downloads</span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="hero-title">
+      Download Anything<br />
+      <span class="gradient-text">From YouTube</span>
+    </h1>
+    <p class="hero-sub">
+      Get MP4 video or MP3 audio in premium high-quality. No registrations, fast downloads.
+    </p>
+
+    <!-- URL Input Card -->
+    <div class="url-card" id="urlCard">
+      <div class="url-input-row">
+        <div class="url-input-wrap">
+          <!-- Tilting URL Icon -->
+          <svg class="url-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          <input
+            type="url"
+            id="urlInput"
+            class="url-input"
+            placeholder="Paste YouTube URL here…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="YouTube video URL"
+          />
+          <button id="clearBtn" class="clear-btn hidden" aria-label="Clear URL input" title="Clear">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <button id="fetchBtn" class="fetch-btn" aria-label="Fetch video details">
+          <span class="fetch-btn-text">Fetch Details</span>
+          <!-- Sleek Chevron Icon -->
+          <svg class="fetch-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          <span class="fetch-spinner hidden"></span>
+        </button>
+      </div>
+
+      <!-- Paste keyboard shortcut hint -->
+      <p class="paste-hint">
+        Press <kbd aria-label="Control V">Ctrl + V</kbd> to paste &nbsp;·&nbsp; Supports YouTube, Shorts, and youtu.be
+      </p>
+    </div>
+
+    <!-- ===================== VIDEO INFO PANEL ===================== -->
+    <div id="infoPanel" class="info-panel hidden" aria-live="polite">
+
+      <!-- Premium Glass Skeleton Loader -->
+      <div id="skeleton" class="skeleton-wrap hidden">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-lines">
+          <div class="skeleton-line w-3/4"></div>
+          <div class="skeleton-line w-1/2"></div>
+          <div class="skeleton-line w-1/3"></div>
+        </div>
+      </div>
+
+      <!-- Actual Video Metadata Info -->
+      <div id="videoInfo" class="video-info hidden">
+
+        <!-- Thumbnail + Meta Description -->
+        <div class="video-meta-row">
+          <div class="thumb-wrap" tabindex="0" aria-label="Video thumbnail">
+            <img id="videoThumb" src="" alt="YouTube Video thumbnail" class="video-thumb" loading="lazy" />
+            <span id="videoDuration" class="thumb-duration" aria-label="Duration"></span>
+          </div>
+          <div class="video-meta">
+            <h2 id="videoTitle" class="video-title"></h2>
+            <p id="videoUploader" class="video-uploader"></p>
+            <!-- Badge Metadata Stats (populated dynamically by JS with SVGs) -->
+            <div class="video-stats">
+              <span id="videoViews" class="stat-badge"></span>
+              <span id="videoDate" class="stat-badge"></span>
+              <span id="videoSize" class="stat-badge"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="panel-divider" />
+
+        <!-- Format Segment Selector -->
+        <div class="format-section">
+          <p class="section-label">Select Format</p>
+          <div class="format-toggle" role="group" aria-label="Output file format selector">
+            <button class="format-btn active" data-format="mp4" id="btnMp4" aria-pressed="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+              </svg>
+              MP4 Video
+            </button>
+            <button class="format-btn" data-format="mp3" id="btnMp3" aria-pressed="false">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+              MP3 Audio
+            </button>
+          </div>
+        </div>
+
+        <!-- Quality Select Grid -->
+        <div class="quality-section">
+          <p class="section-label">Select Quality</p>
+
+          <!-- MP4 quality grid chips -->
+          <div id="mp4Qualities" class="quality-grid" role="group" aria-label="MP4 video quality options">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- MP3 quality grid chips -->
+          <div id="mp3Qualities" class="quality-grid hidden" role="group" aria-label="MP3 audio quality options">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Download Action Button -->
+        <button id="downloadBtn" class="download-btn" aria-label="Trigger video download">
+          <svg class="dl-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="dl-label">Download Now</span>
+          <span class="dl-spinner hidden"></span>
+        </button>
+
+        <!-- Progress bar container (shows during downloading phases) -->
+        <div id="progressWrap" class="progress-wrap hidden" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar-track">
+            <div id="progressBar" class="progress-bar-fill"></div>
+          </div>
+          <p id="progressLabel" class="progress-label">Preparing files…</p>
+        </div>
+
+        <!-- Download another video resetting link -->
+        <p class="reset-hint">
+          <button id="resetBtn" class="reset-btn">← Choose another video</button>
+        </p>
+
+      </div>
+    </div>
+    <!-- ===================== END INFO PANEL ===================== -->
+
+  </div>
+</section>
+
+<!-- Sleek Features Strip -->
+<section class="features-strip">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="features-grid">
+      <!-- Speed feature -->
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div>
+          <p class="feature-title">Lightning Fast</p>
+          <p class="feature-sub">Direct high-speed parsing, no third-party queues</p>
+        </div>
+      </div>
+      <!-- HD feature -->
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+        <div>
+          <p class="feature-title">High Definition</p>
+          <p class="feature-sub">Download up to 1080p MP4 and 320kbps MP3 audio</p>
+        </div>
+      </div>
+      <!-- Security feature -->
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <p class="feature-title">Safe &amp; Secure</p>
+          <p class="feature-sub">Zero storage logs, zero tracking, total privacy</p>
+        </div>
+      </div>
+      <!-- Device feature -->
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <div>
+          <p class="feature-title">Universal Support</p>
+          <p class="feature-sub">Adapts perfectly to all mobile, tablet, and desktop viewports</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

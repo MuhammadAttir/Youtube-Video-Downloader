@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="StreamPull — Download YouTube videos and audio in any quality. Fast, free, no account needed." />
+  <meta name="keywords" content="youtube downloader, mp4 download, mp3 download, video downloader" />
+  <meta property="og:title" content="StreamPull — YouTube Downloader" />
+  <meta property="og:description" content="Download YouTube videos and music in any quality." />
+  <title>{% block title %}StreamPull — YouTube Downloader{% endblock %}</title>
+
+  <!-- Google Fonts - Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['attribute', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            amber: {
+              400: '#FBBF24',
+              500: '#F59E0B',
+            },
+            surface: {
+              900: '#06070a',
+              800: '#0c0e15',
+              700: '#141724',
+              600: '#1c2032',
+              500: '#292f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="font-body bg-surface-900 text-slate-100 min-h-screen antialiased">
+
+  <!-- Animated mesh background -->
+  <div class="mesh-bg" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-bar">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 group" aria-label="StreamPull Home">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="10" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 7.5L15.5 11L8 14.5V7.5Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="font-display font-bold text-lg tracking-tight text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
+          Stream<span class="text-amber-500">Pull</span>
+        </span>
+      </a>
+
+      <!-- Theme toggle -->
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="moon-icon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-sm opacity-50 text-slate-500 dark:text-slate-400">
+        StreamPull &mdash; For personal use only. Respect copyright laws.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
